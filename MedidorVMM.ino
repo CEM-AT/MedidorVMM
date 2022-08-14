@@ -16,12 +16,10 @@ Servo Servo;
 #define pinTriggerGate A5
 
 // Estados lógicos dos atuadores
-int16_t stateFirstIRSensor;
-int16_t stateSecondIRSensor;
-int16_t stateThirdIRSensor;
+uint16_t stateFirstIRSensor;
+uint16_t stateSecondIRSensor;
+uint16_t stateThirdIRSensor;
 
-int16_t servoTriggerSpeed;
-int16_t stateIRTrigger;
 
 // Classes e funções
 /* Responsavel por armazenar algumas variaveis e informacoes
@@ -92,8 +90,8 @@ Character;
 */
 class Display {
   public:
-    void Init(byte _columns, byte _lines) {
-      LiquidCrystal.begin(_columns, _lines);
+    void Init(byte columns, byte lines) {
+      LiquidCrystal.begin(columns, lines);
       delay(1000);
 
       byte characterTopLine[8] = {B11111, B00000, B00000, B00000, B00000, B00000, B00000, B00000};
@@ -115,26 +113,26 @@ class Display {
       LiquidCrystal.createChar(7, characterDelta);
 
     }
-    void setCursor(byte _columnIndex, byte _lineIndex) {
-      LiquidCrystal.setCursor(_columnIndex, _lineIndex);
+    void setCursor(byte columnIndex, byte lineIndex) {
+      LiquidCrystal.setCursor(columnIndex, lineIndex);
     }
-    void print(String _content, byte _columnIndex, byte _lineIndex) {
-      LiquidCrystal.setCursor(_columnIndex, _lineIndex);
-      LiquidCrystal.print(_content);
+    void print(String content, byte columnIndex, byte lineIndex) {
+      LiquidCrystal.setCursor(columnIndex, lineIndex);
+      LiquidCrystal.print(content);
     }
-    void printCentered(String _content, byte _lineIndex, byte _columnCorrection) {
-      if(_lineIndex == 0) Draw.Lines(Character.topLine);
-      if(_lineIndex == 1) Draw.Lines(Character.bottomLine);
-      LiquidCrystal.setCursor((abs(17 - _content.length()) / 2) - _columnCorrection, _lineIndex);
-      LiquidCrystal.print(_content);
+    void printCentered(String content, byte lineIndex, byte columnCorrection) {
+      if(lineIndex == 0) Draw.Lines(Character.topLine);
+      if(lineIndex == 1) Draw.Lines(Character.bottomLine);
+      LiquidCrystal.setCursor((abs(17 - content.length()) / 2) - columnCorrection, lineIndex);
+      LiquidCrystal.print(content);
     }
-    void printWithDelta(String _content, byte _lineIndex, byte _columnCorrection) {
-      if(_lineIndex == 0) Draw.Lines(Character.topLine);
-      if(_lineIndex == 1) Draw.Lines(Character.bottomLine);
-      byte _columnIndex = (abs(17 - _content.length()) / 2) - _columnCorrection;
-      LiquidCrystal.setCursor(_columnIndex, _lineIndex);
-      LiquidCrystal.print(_content);
-      Draw.Char(Character.delta, _columnIndex - 1, _lineIndex);
+    void printWithDelta(String content, byte lineIndex, byte columnCorrection) {
+      if(lineIndex == 0) Draw.Lines(Character.topLine);
+      if(lineIndex == 1) Draw.Lines(Character.bottomLine);
+      byte columnIndex = (abs(17 - content.length()) / 2) - columnCorrection;
+      LiquidCrystal.setCursor(columnIndex, lineIndex);
+      LiquidCrystal.print(content);
+      Draw.Char(Character.delta, columnIndex - 1, lineIndex);
 
     }
     void clear() {
@@ -149,8 +147,8 @@ class Display {
 
     class Draw {
       public:
-        void Char(byte _characterName, byte _columnIndex, byte _lineIndex) {
-          if(_characterName == Character.brackets) {
+        void Char(byte characterName, byte columnIndex, byte lineIndex) {
+          if(characterName == Character.brackets) {
             LiquidCrystal.setCursor(0, 0);
             LiquidCrystal.write(Character.leftTopBracket);
 
@@ -163,7 +161,7 @@ class Display {
             LiquidCrystal.setCursor(15, 1);
             LiquidCrystal.write(Character.rightBottomBracket);
           }
-          else if(_characterName == Character.box) {
+          else if(characterName == Character.box) {
             LiquidCrystal.setCursor(0, 0);
             LiquidCrystal.write(Character.leftTopBracket);
 
@@ -176,37 +174,37 @@ class Display {
             LiquidCrystal.setCursor(15, 1);
             LiquidCrystal.write(Character.rightBottomBracket);
 
-            for(uint8_t _i = 1; _i < 15; _i++) {
-              LiquidCrystal.setCursor(_i, 0);
+            for(uint8_t i = 1; i < 15; i++) {
+              LiquidCrystal.setCursor(i, 0);
               LiquidCrystal.write(Character.topLine);
-              LiquidCrystal.setCursor(_i, 1);
+              LiquidCrystal.setCursor(i, 1);
               LiquidCrystal.write(Character.bottomLine);
             }
           }
           else {
-            LiquidCrystal.setCursor(_columnIndex, _lineIndex);
-            LiquidCrystal.write(_characterName);
+            LiquidCrystal.setCursor(columnIndex, lineIndex);
+            LiquidCrystal.write(characterName);
           }
         }
 
-        void Lines(byte _characterName) {
-          if(_characterName == Character.lines) {
-            for(uint8_t _i = 1; _i < 15; _i++) {
-              LiquidCrystal.setCursor(_i, 0);
+        void Lines(byte characterName) {
+          if(characterName == Character.lines) {
+            for(uint8_t i = 1; i < 15; i++) {
+              LiquidCrystal.setCursor(i, 0);
               LiquidCrystal.write(Character.topLine);
-              LiquidCrystal.setCursor(_i, 1);
+              LiquidCrystal.setCursor(i, 1);
               LiquidCrystal.write(Character.bottomLine);
             }
           }
-          else if(_characterName == Character.topLine) {
-            for(uint8_t _i = 1; _i < 15; _i++) {
-              LiquidCrystal.setCursor(_i, 0);
+          else if(characterName == Character.topLine) {
+            for(uint8_t i = 1; i < 15; i++) {
+              LiquidCrystal.setCursor(i, 0);
               LiquidCrystal.write(Character.topLine);
             }
           }
-          else if(_characterName == Character.bottomLine) {
-            for(uint8_t _i = 1; _i < 15; _i++) {
-              LiquidCrystal.setCursor(_i, 1);
+          else if(characterName == Character.bottomLine) {
+            for(uint8_t i = 1; i < 15; i++) {
+              LiquidCrystal.setCursor(i, 1);
               LiquidCrystal.write(Character.bottomLine);
             }
           }
@@ -224,40 +222,40 @@ Display;
 */
 class Logger {
   public:
-    void Log(String _logContentPrefix, String _logContent) { // New if statement: (bool _isConcatenated)
-      Serial.print(_logContentPrefix);
+    void Log(String logContentPrefix, String logContent) { // New if statement: (bool isConcatenated)
+      Serial.print(logContentPrefix);
       Serial.print(F(" :: "));
-      Serial.println(_logContent);
+      Serial.println(logContent);
     }
     void Init() {
       Credits();
       Serial.println(F(""));
       Serial.println(F("MedidorVMM :: Iniciando setup..."));
 
-      char* _message = "Iniciando";
+      char* message = "Iniciando";
       Display.print(F("Iniciando"), 3, 1);
 
-      byte _tryCount = random(1, 10);
-      byte _lineCount = _tryCount;
-      byte _length = strlen(_message) + 3;
-      for (byte _i = 0; _i < _tryCount; _i++) {
-        if(_lineCount > 0) {
+      byte tryCount = random(1, 10);
+      byte lineCount = tryCount;
+      byte length = strlen(message) + 3;
+      for (byte i = 0; i < tryCount; i++) {
+        if(lineCount > 0) {
           Serial.print(F("MedidorVMM :: Finalizando em: "));
-          Serial.print(_lineCount);
+          Serial.print(lineCount);
           Serial.print(F("s"));
         }
-        for (byte _x = _length; _x < _length+3; _x++) {
-          Display.print(F("."), _x, 1);
-          if(_lineCount > 0) {
+        for (byte x = length; x < length+3; x++) {
+          Display.print(F("."), x, 1);
+          if(lineCount > 0) {
             Serial.print(F("."));
           }
 
           delay(5*115/3.112);
-          Display.Draw.Char(Character.bottomLine, _x, 1);
+          Display.Draw.Char(Character.bottomLine, x, 1);
         }
-        if(_lineCount > 0) {
+        if(lineCount > 0) {
           Serial.print(F("\n"));
-          _lineCount--;
+          lineCount--;
         }
 
       }
@@ -276,32 +274,32 @@ class Logger {
       Display.printCentered(F("MedidorVMM"), 0, 0);
       Display.Draw.Char(Character.delta, 2, 0);
 
-      char* _msg[6];
-      _msg[0] = "Medidor de";
-      _msg[1] = "Velocidade";
-      _msg[2] = "Media no";
-      _msg[3] = "Movimento";
-      _msg[4] = "-";
-      _msg[5] = "MedidorVMM.";
-      byte _cursorPos = 1;
+      char* msg[6];
+      msg[0] = "Medidor de";
+      msg[1] = "Velocidade";
+      msg[2] = "Media no";
+      msg[3] = "Movimento";
+      msg[4] = "-";
+      msg[5] = "MedidorVMM.";
+      byte cursorPos = 1;
 
       Serial.print(F("MedidorVMM :: "));
-      for(byte _word = 0; _word < sizeof(_msg) / 2; _word++) {
-        _cursorPos = abs(16 - (strlen(_msg[_word]))) / 2;
-        for (byte _wordChar = 0; _wordChar < strlen(_msg[_word]); _wordChar++) {
-          for(byte _i = _cursorPos; _i < (17 - _cursorPos); _i++) {
-            Display.Draw.Char(Character.bottomLine, _i, 1);
+      for(byte word = 0; word < sizeof(msg) / 2; word++) {
+        cursorPos = abs(16 - (strlen(msg[word]))) / 2;
+        for (byte wordChar = 0; wordChar < strlen(msg[word]); wordChar++) {
+          for(byte i = cursorPos; i < (17 - cursorPos); i++) {
+            Display.Draw.Char(Character.bottomLine, i, 1);
           }
 
-          Display.print((String)_msg[_word][_wordChar], _cursorPos, 1);
-          Serial.print(_msg[_word][_wordChar]);
-          delay(strlen(_msg[_word]) * strlen(_msg[_word]) * 2);
-          _cursorPos++;
+          Display.print((String)msg[word][wordChar], cursorPos, 1);
+          Serial.print(msg[word][wordChar]);
+          delay(strlen(msg[word]) * strlen(msg[word]) * 2);
+          cursorPos++;
         }
         Serial.print(F(" "));
-        delay(strlen(_msg[_word]) * strlen(_msg[_word]) * 8);
-        for(byte _i = 1; _i < _cursorPos - 1; _i++) {
-          Display.Draw.Char(Character.bottomLine, _i, 1);
+        delay(strlen(msg[word]) * strlen(msg[word]) * 8);
+        for(byte i = 1; i < cursorPos - 1; i++) {
+          Display.Draw.Char(Character.bottomLine, i, 1);
         }
       }
       Serial.println(F(""));
@@ -493,65 +491,79 @@ class Reader {
   public:
     class Data {
       public:
-        class Latest {
+        class Reading {
           public:
-            byte Reading;
-            double Timer[3];
-            double Interval[3];
-            double TimeVariation;
-            double DistanceVariation;
-            double AverageSpeed[2];
-
-            byte RailFinalPosition;
-            byte RailInitialPosition;
-        }
-        Latest;
-        class Previous {
-          public:
-            byte Reading;
+            byte Latest;
             double Timer[20][3];
             double Interval[20][3];
             double TimeVariation[20];
+            double DistanceVariation;
             double AverageSpeed[20][2];
+
+            byte RailFinalPosition;
+            byte RailInitialPosition;
+
         }
-        Previous;
+        Reading;
+        // class Latest {
+        //   public:
+        //     byte Reading;
+        //     double Timer[3];
+        //     double Interval[3];
+        //     double TimeVariation;
+        //     double DistanceVariation;
+        //     double AverageSpeed[2];
+        //
+        //     byte RailFinalPosition;
+        //     byte RailInitialPosition;
+        // }
+        // Latest;
+        // class Previous {
+        //   public:
+        //     byte Reading;
+        //     double Timer[20][3];
+        //     double Interval[20][3];
+        //     double TimeVariation[20];
+        //     double AverageSpeed[20][2];
+        // }
+        // Previous;
     }
     Data;
 
     void Read() {
-      long _msgMillis = millis();
-      byte _msgIndex = 0;
+      long msgMillis = millis();
+      byte msgIndex = 0;
       Trigger.openGate();
 
       Logger.Log(F("Posicionamento"), F("Iniciando o Posicionamento."));
       Logger.Log(F("Posicionamento"), F("Posicione o Objeto e Pressione Left."));
       while(1) {
-        if(millis() - _msgMillis > 1600) {
-          if(_msgIndex == 0) {
+        if(millis() - msgMillis > 1600) {
+          if(msgIndex == 0) {
             Display.printCentered(F("Posicione o"), 1, 1);
-            _msgMillis = millis();
-            _msgIndex++;
+            msgMillis = millis();
+            msgIndex++;
           }
         }
-        if(millis() - _msgMillis > 1250) {
-          if(_msgIndex == 1) {
+        if(millis() - msgMillis > 1250) {
+          if(msgIndex == 1) {
             Display.printCentered(F("Objeto e"), 1, 0);
-            _msgMillis = millis();
-            _msgIndex++;
+            msgMillis = millis();
+            msgIndex++;
           }
         }
-        if(millis() - _msgMillis > 1250) {
-          if(_msgIndex == 2) {
+        if(millis() - msgMillis > 1250) {
+          if(msgIndex == 2) {
             Display.printCentered(F("Pressione"), 1, 1);
-            _msgMillis = millis();
-            _msgIndex++;
+            msgMillis = millis();
+            msgIndex++;
           }
         }
-        if(millis() - _msgMillis > 1200) {
-          if(_msgIndex == 3) {
+        if(millis() - msgMillis > 1200) {
+          if(msgIndex == 3) {
             Display.printCentered(F("Left."), 1, 0);
-            _msgMillis = millis();
-            _msgIndex = 0;
+            msgMillis = millis();
+            msgIndex = 0;
           }
         }
 
@@ -572,52 +584,53 @@ class Reader {
             delay(9000);
           }
 
+          if(Data.Reading.Latest < 20) {
+            Data.Reading.Latest++;
+          } else if(Data.Reading.Latest >= 20) {
+            Data.Reading.Latest = 1;
+          }
+
           delay(250);
-          long _msgMillis = millis();
-          byte _msgIndex = 0;
+          long msgMillis = millis();
+          byte msgIndex = 0;
 
           Trigger.openGate();
-          Data.Latest.Timer[0] = millis();
+          Data.Reading.Timer[Data.Reading.Latest][0] = millis();
           Logger.Log(F("MedidorVMM"), F("Iniciando leitura."));
           Logger.Log(F("MedidorVMM"), F("Sensores abertos."));
           while(1) { // Inicia a leitura e aguarda pela presenca da bolinha no primeiro sensor
-            if(millis() - _msgMillis > 1300) {
-              if(_msgIndex == 0) {
+            if(millis() - msgMillis > 1300) {
+              if(msgIndex == 0) {
                 Display.printCentered(F("Sensores"), 1, 0);
-                _msgMillis = millis();
-                _msgIndex++;
+                msgMillis = millis();
+                msgIndex++;
               }
             }
-            if(millis() - _msgMillis > 1250) {
-              if(_msgIndex == 1) {
+            if(millis() - msgMillis > 1250) {
+              if(msgIndex == 1) {
                 Display.printCentered(F("Iniciados."), 1, 0);
-                _msgMillis = millis();
-                _msgIndex = 0;
+                msgMillis = millis();
+                msgIndex = 0;
               }
             }
 
             stateFirstIRSensor = analogRead(pinFirstIRSensor);
             if(stateFirstIRSensor == 1023) { // Verifica se nao ha sinal no primeiro sensor
-              Data.Latest.Timer[1] = millis();
+              Data.Reading.Timer[Data.Reading.Latest][1] = millis();
               Logger.Log(F("Leitura"), F("Primeiro sensor detectado."));
               Display.printCentered(F("Primeiro IR"), 1, 0);
-              if(Data.Latest.Reading < 20) {
-                Data.Latest.Reading++;
-              } else if(Data.Latest.Reading >= 20) {
-                Data.Latest.Reading = 1;
-              }
 
               while(1) { // Aguarda pela presenca da bolinha no segundo sensor
                 stateSecondIRSensor = analogRead(pinSecondIRSensor);
                 if(stateSecondIRSensor == 1023) { // Verifica se nao ha sinal no segundo sensor
-                  Data.Latest.Timer[2] = millis();
+                  Data.Reading.Timer[Data.Reading.Latest][2] = millis();
                   Logger.Log(F("Leitura"), F("Segundo sensor detectado."));
                   Display.printCentered(F("Segundo IR"), 1, 0);
 
                   while(1) { // Aguarda pela presenca da bolinha no terceiro sensor
                     stateThirdIRSensor = analogRead(pinThirdIRSensor);
                     if(stateThirdIRSensor == 1023) { // Verifica se nao ha sinal no terceiro sensor
-                      Data.Latest.Timer[3] = millis();
+                      Data.Reading.Timer[Data.Reading.Latest][3] = millis();
                       Logger.Log(F("Leitura"), F("Terceiro sensor detectado."));
                       Display.printCentered(F("Terceiro IR"), 1, 0);
                       delay(800);
@@ -630,25 +643,25 @@ class Reader {
                       // Intervalos
                       Logger.Log(F("Processamento"), F("Calculando variações e intervalos."));
                       Logger.Log(F("Processamento"), F("Calculando o primeiro intervalo."));
-                      Data.Latest.Interval[1] = abs(Data.Latest.Timer[2] - Data.Latest.Timer[1]);
+                      Data.Reading.Interval[Data.Reading.Latest][1] = abs(Data.Reading.Timer[Data.Reading.Latest][2] - Data.Reading.Timer[Data.Reading.Latest][1]);
 
                       Logger.Log(F("Processamento"), F("Calculando o segundo intervalo."));
-                      Data.Latest.Interval[2] = abs(Data.Latest.Timer[3] - Data.Latest.Timer[2]);
+                      Data.Reading.Interval[Data.Reading.Latest][2] = abs(Data.Reading.Timer[Data.Reading.Latest][3] - Data.Reading.Timer[Data.Reading.Latest][2]);
 
                       // Variações de tempo
                       Logger.Log(F("Processamento"), F("Calculando a variação de tempo."));
-                      Data.Latest.TimeVariation = abs(Data.Latest.Timer[3] - Data.Latest.Timer[0]);
+                      Data.Reading.TimeVariation[Data.Reading.Latest] = abs(Data.Reading.Timer[Data.Reading.Latest][3] - Data.Reading.Timer[Data.Reading.Latest][0]);
 
                       Logger.Log(F("Processamento"), F("Calculando a variação de distância."));
-                      Data.Latest.DistanceVariation = abs(Data.Latest.RailFinalPosition - Data.Latest.RailInitialPosition);
+                      Data.Reading.DistanceVariation = abs(Data.Reading.RailFinalPosition - Data.Reading.RailInitialPosition);
                       Logger.Log(F("MedidorVMM"), F("Variações e intervalos calculados e processados.\n"));
                       delay(1000);
 
                       // Velocidades medias
                       Logger.Log(F("MedidorVMM"), F("Calculando a velocidade media em diferentes medidas."));
                       Logger.Log(F("Processamento"), F("Calculando a velocidade em CM/MS."));
-                      Data.Latest.AverageSpeed[1] = abs(Data.Latest.DistanceVariation / Data.Latest.TimeVariation); // cm/ms
-                      Data.Latest.AverageSpeed[2] = abs(Data.Latest.DistanceVariation / Data.Latest.TimeVariation) * 1000; // cm/s
+                      Data.Reading.AverageSpeed[Data.Reading.Latest][1] = abs(Data.Reading.DistanceVariation / Data.Reading.TimeVariation[Data.Reading.Latest]); // cm/ms
+                      Data.Reading.AverageSpeed[Data.Reading.Latest][2] = abs(Data.Reading.DistanceVariation / Data.Reading.TimeVariation[Data.Reading.Latest]) * 1000; // cm/s
 
                       Logger.Log(F("Processamento"), F("Velocidades calculadas e processadas."));
                       delay(800);
@@ -656,33 +669,33 @@ class Reader {
                       delay(1000);
 
 
-                      Logger.Log(F("MedidorVMM"), F("Iniciando processamento SISRAM."));
-                      delay(1000);
-                      // Intervalos SISRAM
-                      Logger.Log(F("Processamento"), F("Salvando variações e intervalos."));
-                      Logger.Log(F("Processamento"), F("Salvando o primeiro intervalo."));
-                      Data.Previous.Interval[Data.Latest.Reading][1] = abs(Data.Latest.Timer[2] - Data.Latest.Timer[1]);
-
-                      Logger.Log(F("Processamento"), F("Salvando o segundo intervalo."));
-                      Data.Previous.Interval[Data.Latest.Reading][2] = abs(Data.Latest.Timer[3] - Data.Latest.Timer[2]);
-
-                      // Variações de tempo SISRAM
-                      Logger.Log(F("Processamento"), F("Salvando a variação de tempo."));
-                      Data.Previous.TimeVariation[Data.Latest.Reading] = abs(Data.Latest.Timer[3] - Data.Latest.Timer[0]);
-
-                      Logger.Log(F("Processamento"), F("Salvando a variação de distância."));
-
-                      Logger.Log(F("MedidorVMM"), F("Intervalos e variações calculadas e processados.\n"));
-                      delay(1000);
-
-                      // Velocidades medias SISRAM
-                      Logger.Log(F("MedidorVMM"), F("Salvando a velocidade media em diferentes medidas."));
-                      Logger.Log(F("Processamento"), F("Salvando a velocidade em CM/MS."));
-                      Data.Previous.AverageSpeed[Data.Latest.Reading][1] = abs(Data.Latest.RailFinalPosition / Data.Latest.TimeVariation); // cm/ms
-                      Data.Previous.AverageSpeed[Data.Latest.Reading][2] = abs(Data.Latest.RailFinalPosition / Data.Latest.TimeVariation) * 10; // cm/s
-                      Logger.Log(F("MedidorVMM"), F("Processamento SISRAM completo."));
+                      // Logger.Log(F("MedidorVMM"), F("Iniciando processamento SISRAM."));
+                      // delay(1000);
+                      // // Intervalos SISRAM
+                      // Logger.Log(F("Processamento"), F("Salvando variações e intervalos."));
+                      // Logger.Log(F("Processamento"), F("Salvando o primeiro intervalo."));
+                      // Data.Previous.Interval[Data.Latest.Reading][1] = abs(Data.Latest.Timer[2] - Data.Latest.Timer[1]);
+                      //
+                      // Logger.Log(F("Processamento"), F("Salvando o segundo intervalo."));
+                      // Data.Previous.Interval[Data.Latest.Reading][2] = abs(Data.Latest.Timer[3] - Data.Latest.Timer[2]);
+                      //
+                      // // Variações de tempo SISRAM
+                      // Logger.Log(F("Processamento"), F("Salvando a variação de tempo."));
+                      // Data.Previous.TimeVariation[Data.Latest.Reading] = abs(Data.Latest.Timer[3] - Data.Latest.Timer[0]);
+                      //
+                      // Logger.Log(F("Processamento"), F("Salvando a variação de distância."));
+                      //
+                      // Logger.Log(F("MedidorVMM"), F("Intervalos e variações calculadas e processados.\n"));
+                      // delay(1000);
+                      //
+                      // // Velocidades medias SISRAM
+                      // Logger.Log(F("MedidorVMM"), F("Salvando a velocidade media em diferentes medidas."));
+                      // Logger.Log(F("Processamento"), F("Salvando a velocidade em CM/MS."));
+                      // Data.Previous.AverageSpeed[Data.Latest.Reading][1] = abs(Data.Latest.RailFinalPosition / Data.Latest.TimeVariation); // cm/ms
+                      // Data.Previous.AverageSpeed[Data.Latest.Reading][2] = abs(Data.Latest.RailFinalPosition / Data.Latest.TimeVariation) * 10; // cm/s
+                      // Logger.Log(F("MedidorVMM"), F("Processamento SISRAM completo."));
                       Display.printCentered(F("Processado!"), 1, 0);
-                      DisplayInSerial(Data.Latest.Reading);
+                      DisplayInSerial(Data.Reading.Latest);
                       return;
                     }
                   }
@@ -694,108 +707,108 @@ class Reader {
       }
     }
     void DisplayInSerial(byte ReadingID) {
-      if(Data.Latest.Reading > 0) {
-        String _topMessage = ((String)F("====================[ Leitura N. ") + ReadingID + F("° ]===================="));
-        String _firstIntervalMessage = ((String)F("Primeiro Intervalo: ") + Data.Previous.Interval[ReadingID][1] + F("ms"));
-        String _secondIntervalMessage = ((String)F("Segundo Intervalo: ") + Data.Previous.Interval[ReadingID][2] + F("ms"));
-        String _timeIntervalMessage = ((String)F("Variacao de tempo: ") + Data.Previous.TimeVariation[ReadingID] + F("ms"));
-        String _DistanceVariationMessage = ((String)F("Variacao de distancia: ") + Data.Latest.DistanceVariation + F("cm"));
-        String _averageSpeedMessageCMMS = ((String)F("Velocidade media: ") + Data.Previous.AverageSpeed[ReadingID][1] + F("cm/ms"));
-        String _averageSpeedMessageCMS = ((String)F("Velocidade media: ") + Data.Previous.AverageSpeed[ReadingID][2] + F("m/s"));
+      if(Data.Reading.Latest > 0) {
+        String topMessage = ((String)F("====================[ Leitura N. ") + ReadingID + F("° ]===================="));
+        String firstIntervalMessage = ((String)F("Primeiro Intervalo: ") + Data.Reading.Interval[ReadingID][1] + F("ms"));
+        String secondIntervalMessage = ((String)F("Segundo Intervalo: ") + Data.Reading.Interval[ReadingID][2] + F("ms"));
+        String timeIntervalMessage = ((String)F("Variacao de tempo: ") + Data.Reading.TimeVariation[ReadingID] + F("ms"));
+        String DistanceVariationMessage = ((String)F("Variacao de distancia: ") + Data.Reading.DistanceVariation + F("cm"));
+        String averageSpeedMessageCMMS = ((String)F("Velocidade media: ") + Data.Reading.AverageSpeed[ReadingID][1] + F("cm/ms"));
+        String averageSpeedMessageCMS = ((String)F("Velocidade media: ") + Data.Reading.AverageSpeed[ReadingID][2] + F("m/s"));
 
-        byte _topMessageLength = _topMessage.length() - 1;
-        byte _firstIntervalMessageLength = _firstIntervalMessage.length();
-        byte _secondIntervalMessageLength = _secondIntervalMessage.length();
-        byte _timeIntervalMessageLength = _timeIntervalMessage.length();
-        byte _DistanceVariationMessageLength = _DistanceVariationMessage.length();
-        byte _averageSpeedMessageCMMSLength = _averageSpeedMessageCMMS.length();
-        byte _averageSpeedMessageCMSLength = _averageSpeedMessageCMS.length();
+        byte topMessageLength = topMessage.length() - 1;
+        byte firstIntervalMessageLength = firstIntervalMessage.length();
+        byte secondIntervalMessageLength = secondIntervalMessage.length();
+        byte timeIntervalMessageLength = timeIntervalMessage.length();
+        byte DistanceVariationMessageLength = DistanceVariationMessage.length();
+        byte averageSpeedMessageCMMSLength = averageSpeedMessageCMMS.length();
+        byte averageSpeedMessageCMSLength = averageSpeedMessageCMS.length();
 
-        byte _firstIntervalMessageCentered = abs(_topMessageLength - _firstIntervalMessageLength) / 2;
-        byte _secondIntervalMessageCentered = abs(_topMessageLength - _secondIntervalMessageLength) / 2;
-        byte _timeIntervalMessageCentered = abs(_topMessageLength - _timeIntervalMessageLength) / 2;
-        byte _DistanceVariationMessageCentered = abs(_topMessageLength - _DistanceVariationMessageLength) / 2;
-        byte _averageSpeedMessageCMMSCentered = abs(_topMessageLength - _averageSpeedMessageCMMSLength) / 2;
-        byte _averageSpeedMessageCMSCentered = abs(_topMessageLength - _averageSpeedMessageCMSLength) / 2;
+        byte firstIntervalMessageCentered = abs(topMessageLength - firstIntervalMessageLength) / 2;
+        byte secondIntervalMessageCentered = abs(topMessageLength - secondIntervalMessageLength) / 2;
+        byte timeIntervalMessageCentered = abs(topMessageLength - timeIntervalMessageLength) / 2;
+        byte DistanceVariationMessageCentered = abs(topMessageLength - DistanceVariationMessageLength) / 2;
+        byte averageSpeedMessageCMMSCentered = abs(topMessageLength - averageSpeedMessageCMMSLength) / 2;
+        byte averageSpeedMessageCMSCentered = abs(topMessageLength - averageSpeedMessageCMSLength) / 2;
 
         Serial.print(F("|"));
-        Serial.print(_topMessage);
+        Serial.print(topMessage);
         Serial.println(F("|"));
 
         // First interval line
         Serial.print(F("|"));
-        for(byte _i = 0; _i < _firstIntervalMessageCentered; _i++) {
+        for(byte i = 0; i < firstIntervalMessageCentered; i++) {
           Serial.print(F(" "));
         }
         Serial.print(F("Primeiro intervalo: "));
-        Serial.print(Data.Previous.Interval[ReadingID][1]);
+        Serial.print(Data.Reading.Interval[ReadingID][1]);
         Serial.print(F("ms"));
-        for(byte _i = 0; _i < (_topMessageLength) - (_firstIntervalMessageLength + _firstIntervalMessageCentered); _i++) {
+        for(byte i = 0; i < (topMessageLength) - (firstIntervalMessageLength + firstIntervalMessageCentered); i++) {
           Serial.print(F(" "));
         }
         Serial.println(F("|"));
 
         // Second interval line
         Serial.print(F("|"));
-        for(byte _i = 0; _i < _secondIntervalMessageCentered; _i++) {
+        for(byte i = 0; i < secondIntervalMessageCentered; i++) {
           Serial.print(F(" "));
         }
         Serial.print(F("Segundo intervalo: "));
-        Serial.print(Data.Previous.Interval[ReadingID][2]);
+        Serial.print(Data.Reading.Interval[ReadingID][2]);
         Serial.print(F("ms"));
-        for(byte _i = 0; _i < (_topMessageLength) - (_secondIntervalMessageLength + _secondIntervalMessageCentered); _i++) {
+        for(byte i = 0; i < (topMessageLength) - (secondIntervalMessageLength + secondIntervalMessageCentered); i++) {
           Serial.print(F(" "));
         }
         Serial.println(F("|"));
 
         // Time interval line
         Serial.print(F("|"));
-        for(byte _i = 0; _i < _timeIntervalMessageCentered; _i++) {
+        for(byte i = 0; i < timeIntervalMessageCentered; i++) {
           Serial.print(F(" "));
         }
         Serial.print(F("Variacao de tempo: "));
-        Serial.print(Data.Previous.TimeVariation[ReadingID]);
+        Serial.print(Data.Reading.TimeVariation[ReadingID]);
         Serial.print(F("ms"));
-        for(byte _i = 0; _i < _topMessageLength - (_timeIntervalMessageLength + _timeIntervalMessageCentered); _i++) {
+        for(byte i = 0; i < topMessageLength - (timeIntervalMessageLength + timeIntervalMessageCentered); i++) {
           Serial.print(F(" "));
         }
         Serial.println(F("|"));
 
         // Distance variation line
         Serial.print(F("|"));
-        for(byte _i = 0; _i < _DistanceVariationMessageCentered; _i++) {
+        for(byte i = 0; i < DistanceVariationMessageCentered; i++) {
           Serial.print(F(" "));
         }
         Serial.print(F("Variacao de distancia: "));
-        Serial.print(Data.Latest.DistanceVariation);
+        Serial.print(Data.Reading.DistanceVariation);
         Serial.print(F("cm"));
-        for(byte _i = 0; _i < _topMessageLength - (_DistanceVariationMessageLength + _DistanceVariationMessageCentered); _i++) {
+        for(byte i = 0; i < topMessageLength - (DistanceVariationMessageLength + DistanceVariationMessageCentered); i++) {
           Serial.print(F(" "));
         }
         Serial.println(F("|"));
 
         // Average speed line
         Serial.print(F("|"));
-        for(byte _x = 0; _x < _averageSpeedMessageCMMSCentered; _x++) {
+        for(byte x = 0; x < averageSpeedMessageCMMSCentered; x++) {
           Serial.print(F(" "));
         }
         Serial.print(F("Velocidade media: "));
-        Serial.print(Data.Previous.AverageSpeed[ReadingID][1]);
+        Serial.print(Data.Reading.AverageSpeed[ReadingID][1]);
         Serial.print(F("cm/ms"));
-        for(byte _i = 0; _i < _topMessageLength - (_averageSpeedMessageCMMSLength + _averageSpeedMessageCMMSCentered); _i++) {
+        for(byte i = 0; i < topMessageLength - (averageSpeedMessageCMMSLength + averageSpeedMessageCMMSCentered); i++) {
           Serial.print(F(" "));
         }
         Serial.println(F("|"));
 
         // Average speed line
         Serial.print(F("|"));
-        for(byte _x = 0; _x < _averageSpeedMessageCMSCentered; _x++) {
+        for(byte x = 0; x < averageSpeedMessageCMSCentered; x++) {
           Serial.print(F(" "));
         }
         Serial.print(F("Velocidade media: "));
-        Serial.print(Data.Previous.AverageSpeed[ReadingID][2]);
+        Serial.print(Data.Reading.AverageSpeed[ReadingID][2]);
         Serial.print(F("m/s"));
-        for(byte _i = 0; _i < _topMessageLength - (_averageSpeedMessageCMSLength + _averageSpeedMessageCMSCentered); _i++) {
+        for(byte i = 0; i < topMessageLength - (averageSpeedMessageCMSLength + averageSpeedMessageCMSCentered); i++) {
           Serial.print(F(" "));
         }
         Serial.println(F("|"));
@@ -844,7 +857,7 @@ class Menu {
       public:
         byte currentRead = 1;
         byte minRead = 1;
-        byte maxRead = Reader.Data.Latest.Reading;
+        byte maxRead = Reader.Data.Reading.Latest;
         class Pages {
           private:
             byte currentPage = 1;
@@ -858,19 +871,19 @@ class Menu {
           public:
             void displayPage() {
               if(currentPage == intervalPage) {
-                Display.printCentered((String)F("1I: ") + Reader.Data.Previous.Interval[Menu().Reading.currentRead][1] + F("ms"), 0, 0);
-                Display.printCentered((String)F("2I: ") + Reader.Data.Previous.Interval[Menu().Reading.currentRead][2] + F("ms"), 1, 0);
+                Display.printCentered((String)F("1I: ") + Reader.Data.Reading.Interval[Menu().Reading.currentRead][1] + F("ms"), 0, 0);
+                Display.printCentered((String)F("2I: ") + Reader.Data.Reading.Interval[Menu().Reading.currentRead][2] + F("ms"), 1, 0);
 
               } else if(currentPage == variationPage) {
-                String firstMessage = (String)F("T: ") + Reader.Data.Previous.TimeVariation[Menu().Reading.currentRead] + F("ms");
-                String secondMessage = (String)F("D: ") + Reader.Data.Latest.DistanceVariation + F("cm");
+                String firstMessage = (String)F("T: ") + Reader.Data.Reading.TimeVariation[Menu().Reading.currentRead] + F("ms");
+                String secondMessage = (String)F("D: ") + Reader.Data.Reading.DistanceVariation + F("cm");
 
                 Display.printWithDelta(firstMessage, 0, 0);
                 Display.printWithDelta(secondMessage, 1, 0);
 
               } else if(currentPage == speedPage) {
-                Display.printCentered((String)F("VM: ") + Reader.Data.Previous.AverageSpeed[Menu().Reading.currentRead][1] + F("cm/ms"), 0, 0);
-                Display.printCentered((String)F("VM: ") + Reader.Data.Previous.AverageSpeed[Menu().Reading.currentRead][2] + F("m/s"), 1, 0);
+                Display.printCentered((String)F("VM: ") + Reader.Data.Reading.AverageSpeed[Menu().Reading.currentRead][1] + F("cm/ms"), 0, 0);
+                Display.printCentered((String)F("VM: ") + Reader.Data.Reading.AverageSpeed[Menu().Reading.currentRead][2] + F("m/s"), 1, 0);
               }
             }
 
@@ -1011,7 +1024,7 @@ class Menu {
         switch(KeypadButton.Pressed()) {
           case KeypadButton.Select:
             delay(250);
-            if(Reader.Data.Latest.Reading > 0) {
+            if(Reader.Data.Reading.Latest > 0) {
               currentEntry--;
               break;
             }
@@ -1020,7 +1033,7 @@ class Menu {
         switch(KeypadButton.Pressed()) {
           case KeypadButton.Select:
             delay(250);
-            if(Reader.Data.Latest.Reading > 0) {
+            if(Reader.Data.Reading.Latest > 0) {
               currentEntry++;
               readingEntryTimer = millis();
               Reading.latestRead();
@@ -1031,7 +1044,7 @@ class Menu {
     }
 
     void nextMenu() {
-      if(Reader.Data.Latest.Reading > 0)
+      if(Reader.Data.Reading.Latest > 0)
       if(currentEntry < maxEntry) {
         currentEntry++;
       }
@@ -1046,7 +1059,7 @@ class Menu {
       currentEntry = homeEntry;
     }
     void toReading() {
-      if(Reader.Data.Latest.Reading > 0) {
+      if(Reader.Data.Reading.Latest > 0) {
         currentEntry = readingEntry;
       } else {
         currentEntry = homeEntry;
@@ -1072,8 +1085,8 @@ Menu;
 
 // Laço de configuração inicial
 void setup() {
-  Reader.Data.Latest.RailFinalPosition = 90;
-  Reader.Data.Latest.RailInitialPosition = 0;
+  Reader.Data.Reading.RailFinalPosition = 90;
+  Reader.Data.Reading.RailInitialPosition = 0;
 
   pinMode(pinFirstIRSensor, INPUT);
   pinMode(pinSecondIRSensor, INPUT);
