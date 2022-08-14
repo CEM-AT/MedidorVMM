@@ -844,7 +844,7 @@ class Menu {
       public:
         byte currentRead = 1;
         byte minRead = 1;
-        byte maxRead = maxRead;
+        byte maxRead = Reader.Data.Latest.Reading;
         class Pages {
           private:
             byte currentPage = 1;
@@ -1098,4 +1098,5 @@ void loop() {
 }
 
 /* Working on
+  Unificar os dados armazenados das leituras em um só.
 */
