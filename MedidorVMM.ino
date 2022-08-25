@@ -581,7 +581,7 @@ class Reader {
           for (byte seconds = 10; seconds > 0; seconds--) {
             Logger.Log(F("MedidorVMM"), (String)F("Iniciando a leitura em: ") + seconds + F("s."));
             Display.printCentered((String)F("Iniciando em ") + seconds, 1, 0);
-            delay(9000);
+            delay(1000);
           }
 
           if(Data.Reading.Latest < 20) {
@@ -1109,7 +1109,3 @@ void setup() {
 void loop() {
   Menu.loop();
 }
-
-/* Working on
-  Unificar os dados armazenados das leituras em um só.
-*/
